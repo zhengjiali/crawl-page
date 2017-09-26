@@ -137,6 +137,75 @@ public class dealexcel {
 				// TODO Auto-generated catch block
 			}
 		}
+		
+		try{
+			clickCreate(dir,kw);
+			clickSubmitAll(dir,kw);
+			clickRetractAll(dir,kw);
+			clickDeleteAll(dir,kw);
+		}catch(Error e){
+			return;
+		}
+	}
+	
+	public void clickCreate(String dir,String kw){
+		try{
+			driver.findElement(By.className("btn_create")).click();
+			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			try {
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_create"+".jpg"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			}
+			driver.navigate().back();
+		}catch(NoSuchElementException e){
+			return;
+		}
+	}
+	public void clickSubmitAll(String dir,String kw){
+		try{
+			driver.findElement(By.id("submit_all")).click();
+			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			try {
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_create"+".jpg"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			}
+			WebElement tips = driver.findElement(By.className("dialog_hd"));
+			new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOf(tips));
+		}catch(Exception e){
+			return;
+		}
+	}
+	public void clickRetractAll(String dir,String kw){
+		try{
+			driver.findElement(By.id("retract_all")).click();
+			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			try {
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_create"+".jpg"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			}
+			WebElement tips = driver.findElement(By.className("dialog_hd"));
+			new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOf(tips));
+		}catch(Exception e){
+			return;
+		}
+	}
+	public void clickDeleteAll(String dir,String kw){
+		try{
+			driver.findElement(By.id("delete_all")).click();
+			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			try {
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_create"+".jpg"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			}
+			WebElement tips = driver.findElement(By.className("dialog_hd"));
+			new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOf(tips));
+		}catch(Exception e){
+			return;
+		}
 	}
 		
 

@@ -153,7 +153,7 @@ public class dealexcel {
 			driver.findElement(By.className("btn_create")).click();
 			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_create"+".jpg"));
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_Create"+".jpg"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 			}
@@ -167,7 +167,7 @@ public class dealexcel {
 			driver.findElement(By.id("submit_all")).click();
 			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_create"+".jpg"));
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_SubmitAll"+".jpg"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 			}
@@ -182,7 +182,7 @@ public class dealexcel {
 			driver.findElement(By.id("retract_all")).click();
 			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_create"+".jpg"));
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_RetractAll"+".jpg"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 			}
@@ -197,7 +197,7 @@ public class dealexcel {
 			driver.findElement(By.id("delete_all")).click();
 			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_create"+".jpg"));
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_DeleteAll"+".jpg"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 			}

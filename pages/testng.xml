@@ -3,6 +3,6 @@
     <test name="Crawl-Pages" preserve-order="true">
     <parameter name="admin1" value="123456" />
         <classes>
-            <class name="com.risk.auto.pages.dealexcel"/>
+            <class name="com.risk.auto.pages.demo2"/>
         </classes>
     </test></suite>

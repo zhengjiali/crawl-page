@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
 
@@ -59,7 +60,7 @@ public class dealexcel {
 		System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
 		driver = new ChromeDriver();
 		driver.get(uri+"/risk/trics/login");
-		driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS);
 		new_dir(root_path);
 	}
 	
@@ -73,7 +74,7 @@ public class dealexcel {
 		WebElement ElementLogin = driver.findElement(By.className("submit_btn"));
 		ElementLogin.click();
 		System.out.println(driver.getTitle());
-		new WebDriverWait(driver, 15 ).until(
+		new WebDriverWait(driver, 5 ).until(
 				ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > div.container > div.clearfix.header > a"))
 		);
 		currPath = root_path+"/"+"admin1";
@@ -139,10 +140,8 @@ public class dealexcel {
 		}
 		
 		try{
-			clickCreate(dir,kw);
-			clickSubmitAll(dir,kw);
-			clickRetractAll(dir,kw);
-			clickDeleteAll(dir,kw);
+			clickMainTools(dir,kw,title);
+			clickItemTools(dir,kw,title);
 		}catch(Error e){
 			return;
 		}
@@ -162,47 +161,63 @@ public class dealexcel {
 			return;
 		}
 	}
-	public void clickSubmitAll(String dir,String kw){
+
+	public void clickMainTools(String dir,String kw,String title){
 		try{
-			driver.findElement(By.id("submit_all")).click();
-			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_SubmitAll"+".jpg"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-			}
-			WebElement tips = driver.findElement(By.className("dialog_hd"));
-			new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOf(tips));
+			WebElement content = driver.findElement(By.className("content"));
+			WebElement mainTools = content.findElement(By.className("main_tools"));
+		    List<WebElement> tools = mainTools.findElements(By.tagName("a"));
+			int n = tools.size();
+			for(int i = 0;i < n;i++){
+				tools.get(i).click();
+				File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+(i+1)+".jpg"));
+				try{
+					WebElement tips = driver.findElement(By.className("dialog_hd"));
+					driver.findElement(By.className("dialog_close")).click();
+					new WebDriverWait(driver,4).until(ExpectedConditions.invisibilityOf(tips));
+				}catch(Exception e){
+					if(driver.getTitle() != title)
+						driver.navigate().back();
+				}
+				}
 		}catch(Exception e){
 			return;
 		}
 	}
-	public void clickRetractAll(String dir,String kw){
+	
+	public void clickItemTools(String dir,String kw,String title){
 		try{
-			driver.findElement(By.id("retract_all")).click();
-			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_RetractAll"+".jpg"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-			}
-			WebElement tips = driver.findElement(By.className("dialog_hd"));
-			new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOf(tips));
-		}catch(Exception e){
-			return;
-		}
-	}
-	public void clickDeleteAll(String dir,String kw){
-		try{
-			driver.findElement(By.id("delete_all")).click();
-			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_DeleteAll"+".jpg"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-			}
-			WebElement tips = driver.findElement(By.className("dialog_hd"));
-			new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOf(tips));
+			WebElement content = driver.findElement(By.xpath("//*[@id='list']/table/tbody"));
+			List<WebElement> items = content.findElements(By.tagName("tr"));
+			List<WebElement> tools;
+			int n;
+			for(int j = 0;j < 3;j++){
+//				System.out.println("First Loop ------->"+j);
+				tools = items.get(j).findElements(By.tagName("a"));
+				n = tools.size();
+				for(int i = 0;i < n;i++){
+//					System.out.println("Second Loop ------->"+i);
+					if(tools.get(i).getAttribute("href") == "#copy")
+						continue;
+					tools.get(i).click();
+					File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+					FileUtils.copyFile(screenshot, new File(dir+"/"+kw+(j+1)+(i+1)+".jpg"));
+					try{
+						WebElement tips = driver.findElement(By.className("dialog_hd"));
+						driver.findElement(By.className("dialog_close")).click();
+						new WebDriverWait(driver,4).until(ExpectedConditions.invisibilityOf(tips));
+					}catch(Exception e){
+						if(driver.getTitle() != title)
+							driver.navigate().back();
+						new WebDriverWait(driver,4).until(ExpectedConditions.titleIs(title));
+						content = driver.findElement(By.xpath("//*[@id='list']/table/tbody"));
+						items = content.findElements(By.tagName("tr"));
+						tools = items.get(j).findElements(By.tagName("a"));
+						n = tools.size();
+					}
+					}
+			}			
 		}catch(Exception e){
 			return;
 		}

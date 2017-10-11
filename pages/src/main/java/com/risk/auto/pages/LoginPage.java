@@ -1,27 +1,28 @@
 package com.risk.auto.pages;
 
 
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 
 
-public class login {
+public class LoginPage {
 	
-	@FindBy(id="user_name")
+	@FindBy(name="userName")
 	private WebElement username;
 	
-	@FindBy(id="pwd")
+	@FindBy(name="password")
 	private WebElement passwd;
 	
-	@FindBy(id="is_remember")
+	@FindBy(name="isExemptLogin")
 	private WebElement remeBtn;
 	
 	@FindBy(className="submit_btn")
 	private WebElement loginBtn;
 
 	
-	public void loginData(String name,String pwd,Boolean r){
+	public void login(String name,String pwd,Boolean r){
 		this.username.sendKeys(name);
 		this.passwd.sendKeys(pwd);
 		if(r)

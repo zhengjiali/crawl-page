@@ -1,5 +1,4 @@
 package com.risk.auto.pages;
-import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -7,10 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.PageFactory;
@@ -31,66 +26,95 @@ public class testcase {
 	String time = format.format(date);
 	String root_path = "../pic/"+time;
 	ArrayList<HashMap<String, String>> pages;
+	FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 	
 	
 	@BeforeClass
 	public void setUp() throws IOException{
+		String url="http://risk.bat.tcredit.com/riskData/trics/data/toDataPage?funCode=201";
 		System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
 		driver = new ChromeDriver();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(3,TimeUnit.SECONDS);
 		util.new_dir(root_path);
+		driver.manage().window().maximize();
+		login();
+		driver.get(url);
+		String title = driver.getTitle();
 	}
 	
-	@Test(priority=0)
+/*	@BeforeMethod
+	public void initTest(){
+		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
+	}
+	@AfterMethod
+	public void tearTest(){
+	}*/
+	
 	public void login(){
 		driver.get(uri+"/riskData/trics/login");
 		LoginPage loginPage=PageFactory.initElements(driver, LoginPage.class);
 		loginPage.login("admin1", "123456", false);
-		new WebDriverWait(driver,4).until(ExpectedConditions.not(ExpectedConditions.titleContains("登陆")));
-		File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-		try {
-			FileUtils.copyFile(screenshot, new File(root_path+"/"+"login.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-		}
+		new WebDriverWait(driver,4).until(ExpectedConditions.titleContains("数据"));
+		util.screenShot(driver, root_path, "login");
 		Assert.assertEquals(driver.getTitle(), "DB数据管理");
 
 	}
 	
 	@Test(priority=2)
-	public void Search(){
+	public void searchStatus(){
+		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 		firstlistpage.searchByStatus("已提交");
-		File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-		try {
-			FileUtils.copyFile(screenshot, new File(root_path+"/"+"Search.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-		}
+		Assert.assertEquals(firstlistpage.getStatus(5), "已提交");
+		util.screenShot(driver, root_path, "searchStatus");	
 	}
 	
-	@Test(priority=1)
-	public void SearchTimeStart(){
+	@Test(priority=4)
+	public void searchTimeStart(){
+		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 		firstlistpage.searchByTimeStart("2017-08-08");
-		File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-		try {
-			FileUtils.copyFile(screenshot, new File(root_path+"/"+"SearchTimeStart.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-		}
+		util.screenShot(driver, root_path, "searchTimeStart");
 	}
 	
 	@Test(priority=3)
-	public void SearchTimeEnd(){
+	public void searchTimeEnd(){
+		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 		firstlistpage.searchByTimeEnd("2017-08-18");
-		File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-		try {
-			FileUtils.copyFile(screenshot, new File(root_path+"/"+"SearchTimeEnd.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		util.screenShot(driver, root_path, "searchTimeEnd");
+	}
+	
+	@Test(priority=1)
+	public void bulkSubmit(){
+		driver.navigate().refresh();
+		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
+		firstlistpage.selectItem(1);
+		firstlistpage.selectItem(2);
+		firstlistpage.selectItem(3);
+		firstlistpage.selectItem(4);
+		firstlistpage.selectItem(2);
+		firstlistpage.bulkOpSubmit();
+		util.screenShot(driver, root_path, "selectItem");
+	}
+	
+	@Test(priority=5)
+	public void submitItem(){
+		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
+		driver.navigate().refresh();
+		firstlistpage.searchByStatus("可编辑");
+		String name = firstlistpage.getNameEn(3);
+		firstlistpage.opItem(3, "提交");
+		firstlistpage.submitDialog();
+		String result=firstlistpage.showDialog();
+		if(result.contains("成功")){
+			firstlistpage.closeDialog();
+			Assert.assertEquals(firstlistpage.getNameEn(1), name);
 		}
+		util.log(result);
+		util.screenShot(driver, name, "submitItem1");
+		Assert.fail();
+		
 	}
 	
 	@AfterClass

@@ -21,9 +21,9 @@ public class util {
 			file.mkdir();
 		}
 	}
-	public static void log(String s){
+	public static void log(boolean b){
 		if(debug)
-			System.out.println(s);
+			System.out.println(b);
 	}
 	
 	public static void screenShot(WebDriver driver,String root_path,String kw){
@@ -34,5 +34,10 @@ public class util {
 			// TODO Auto-generated catch block
 		}
 		
+	}
+	public static void log(String s) {
+		// TODO Auto-generated method stub
+		if(debug)
+			System.out.println(s);
 	}
 }

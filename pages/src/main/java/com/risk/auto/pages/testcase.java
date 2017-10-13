@@ -34,7 +34,7 @@ public class testcase {
 		String url="http://risk.bat.tcredit.com/riskData/trics/data/toDataPage?funCode=201";
 		System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
 		driver = new ChromeDriver();
-		driver.manage().timeouts().implicitlyWait(3,TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
 		util.new_dir(root_path);
 		driver.manage().window().maximize();
 		login();
@@ -60,7 +60,7 @@ public class testcase {
 
 	}
 	
-	@Test(priority=2)
+	@Test(/*priority=2*/enabled=false)
 	public void searchStatus(){
 		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -69,7 +69,7 @@ public class testcase {
 		util.screenShot(driver, root_path, "searchStatus");	
 	}
 	
-	@Test(priority=4)
+	@Test(/*priority=4*/enabled=false)
 	public void searchTimeStart(){
 		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -77,7 +77,7 @@ public class testcase {
 		util.screenShot(driver, root_path, "searchTimeStart");
 	}
 	
-	@Test(priority=3)
+	@Test(/*priority=3*/enabled=false)
 	public void searchTimeEnd(){
 		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -85,9 +85,16 @@ public class testcase {
 		util.screenShot(driver, root_path, "searchTimeEnd");
 	}
 	
-	@Test(priority=1)
+	@Test(enabled=false)
 	public void bulkSubmit(){
+		String s=driver.getTitle();
 		driver.navigate().refresh();
+		if(driver.getTitle().equals(s))
+			util.log("相等");
+		else
+			util.log("相等");
+		Assert.assertEquals(driver.getTitle(), s);
+		/*
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 		firstlistpage.selectItem(1);
 		firstlistpage.selectItem(2);
@@ -95,27 +102,31 @@ public class testcase {
 		firstlistpage.selectItem(4);
 		firstlistpage.selectItem(2);
 		firstlistpage.bulkOpSubmit();
-		util.screenShot(driver, root_path, "selectItem");
+		util.screenShot(driver, root_path, "selectItem");*/
 	}
 	
-	@Test(priority=5)
+	@Test(priority=1)
 	public void submitItem(){
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 		driver.navigate().refresh();
 		firstlistpage.searchByStatus("可编辑");
-		String name = firstlistpage.getNameEn(3);
-		firstlistpage.opItem(3, "提交");
-		firstlistpage.submitDialog();
-		String result=firstlistpage.showDialog();
-		if(result.contains("成功")){
-			firstlistpage.closeDialog();
+		String name = firstlistpage.getNameEn(1);
+		util.log(name);
+		util.screenShot(driver, root_path, "submit-step1");
+		if(firstlistpage.opItem(driver,1, "提交",root_path)){
+			util.screenShot(driver, root_path, "submit-step2");
+			driver.navigate().refresh();
+			util.log("The operation name is:"+name);
+			util.log("The result is:"+firstlistpage.getNameEn(1));
 			Assert.assertEquals(firstlistpage.getNameEn(1), name);
+			util.screenShot(driver, root_path, "submit-step3");;
 		}
-		util.log(result);
-		util.screenShot(driver, name, "submitItem1");
-		Assert.fail();
-		
+		else{
+			util.screenShot(driver, root_path, "submit-err");
+			Assert.fail();
+		}
 	}
+
 	
 	@AfterClass
 	public void tearDown(){

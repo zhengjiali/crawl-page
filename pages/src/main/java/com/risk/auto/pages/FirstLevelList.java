@@ -1,6 +1,9 @@
 package com.risk.auto.pages;
 
+
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -46,20 +49,76 @@ public class FirstLevelList{
 	
 	@FindBy(tagName="tbody")
 	private WebElement items;
-	
-	@FindBy(className="dialog_bd")
+	@FindBy(className="dialog")
 	private WebElement dialog;
+	@FindBy(className="dialog_bd")
+	private WebElement confirmDialog;
+	@FindBy(className="dialog_tip_sucess")
+	private WebElement sucessTip;
+	@FindBy(className="dialog_tip_fail")
+	private WebElement failTip;
+	@FindBy(className="dialog_close")
+	private WebElement closeDialog;
 	
-	public String showDialog(){
-		return this.dialog.findElement(By.xpath("//div[1]/p")).getText();
+	@FindBy(className="notedssss")
+	private WebElement test;
+	
+	private Boolean isExist(WebElement ele){
+		try{
+			ele.getTagName();
+			return true;
+		}catch(Exception e){
+			return false;
+		}finally{}
 	}
+	
+	/*public void test(){
+		if(this.isExist(this.sucessTip))
+			util.log("exist");
+		else
+			util.log("nooooo");
+
+	}*/
 	
 	public void closeDialog(){
-		this.dialog.findElement(By.className("dialog_close")).click();
+		this.closeDialog.click();
 	}
 
-	public void submitDialog(){
-		this.dialog.findElement(By.xpath("//div[2]/button[2]")).click();
+	private WebElement certainDialog(){
+		return this.confirmDialog.findElement(By.xpath("//div[2]/button[2]"));
+	}
+	
+	static int i=0;
+	/**
+	 * button("确定")
+	 * @return if displayFailed:
+	 * 				return false
+	 */
+	public Boolean submitDialog(WebDriver driver,String root_path){
+		i=i+1;
+		util.log("+++++In submitDiag");
+		util.screenShot(driver, root_path, "showDiag"+i);
+	
+		if(this.isExist(this.confirmDialog)){
+			util.log("+++++ SubmitDiag:Into the first branch");
+			new WebDriverWait(driver,2).until(ExpectedConditions.elementToBeClickable(this.certainDialog())).click();;
+			util.screenShot(driver, root_path, "diag-click1");
+			if(this.isExist(this.dialog)){
+				util.log("another dialog");
+				this.submitDialog(driver,root_path);
+				}
+		}else if(this.isExist(this.sucessTip)){
+			util.log("+++++ SubmitDiag:Into the second branch");
+			util.screenShot(driver, root_path, "diag-succ1");
+			this.closeDialog();
+			return true;
+		}else if(this.isExist(this.failTip)){
+			util.log("++++++ SubmitDiag:Into the third branch");
+			util.screenShot(driver, root_path, "diag-fail");
+			return false;
+		} 
+		return true;
+		
 	}
 	
 	public void cancelDialog(){
@@ -128,12 +187,9 @@ public class FirstLevelList{
 	public String getStatus(int line){
 		return this.items.findElement(By.xpath("//tr["+line+"]/td[9]")).getText();
 	}
-	/**
-	 * 
-	 * @param line of the item(1,2,3...10)
-	 * @param op One operation of item
-	 */
-	public void opItem(int line,String op){
+	
+	private WebElement opButtn(int line,String op){
+		util.log("+++++In opButtn");
 		int i=0;
 		if(op == "测试")
 			i=1;
@@ -143,7 +199,31 @@ public class FirstLevelList{
 			i=3;
 		else if(op == "删除")
 			i=4;
-		this.items.findElement(By.xpath("//tr["+line+"]/td[10]/a["+i+"]")).click();
+		return this.items.findElement(By.xpath("//tr["+line+"]/td[10]/a["+i+"]"));
+	}
+	/**
+	 * @param currentDriver
+	 * @param line of the item(1,2,3...10)
+	 * @param op One operation of item
+	 * @return If currentPageJumped and displaySucceed:
+	 * 				return true;
+	 * 		   if displayFaild:
+	 * 				return false;		
+	 */
+	public Boolean opItem(WebDriver driver,int line,String op,String path){
+		util.log("+++++In opItem");
+		String title1 = driver.getTitle();
+		this.opButtn(line,op).click();
+		util.screenShot(driver, path, "AfterClick");
+		if(!driver.getTitle().equals(title1)){
+			util.log("page jumped,current title is:"+driver.getTitle()+"\n---title1 is:"+title1);
+			return true;
+			}
+		else if(this.submitDialog(driver,path)){
+			util.log("not jumped");
+			return true;
+		}
+		else return false;
 	}
 	
 	
@@ -173,11 +253,11 @@ public class FirstLevelList{
 	 */
 	public void searchByStatus(String s){
 		Integer id = 0;
-		if(s=="可编辑")
+		if(s.equals("可编辑"))
 			id=1;
-		else if(s=="已提交")
+		else if(s.equals("已提交"))
 			id=2;
-			else if(s == "使用中")
+			else if(s.equals("使用中"))
 				id=3;
 		this.status.findElement(By.xpath("//option[@value='"+id+"']")).click();
 		this.searchBtn.click();

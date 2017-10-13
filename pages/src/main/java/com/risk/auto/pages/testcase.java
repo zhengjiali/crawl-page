@@ -93,7 +93,7 @@ public class testcase {
 		firstlistpage.selectItem(3);
 		firstlistpage.selectItem(4);
 		firstlistpage.selectItem(2);
-		firstlistpage.bulkOpSubmit();
+		firstlistpage.submitAll();
 		util.screenShot(driver, root_path, "selectItem");
 	}
 	

@@ -283,13 +283,13 @@ public class FirstLevelList{
 		this.searchBtn.click();
 	}
 	
-	public void bulkOpSubmit(){
+	public void submitAll(){
 		this.bulkSubmit.click();
 	}
-	public void bulkOpDelete(){
+	public void deleteAll(){
 		this.bulkDelete.click();
 	}
-	public void bulkOpRetract(){
+	public void retractAll(){
 		this.bulkRetract.click();
 	}
 }

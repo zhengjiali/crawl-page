@@ -87,38 +87,32 @@ public class FirstLevelList{
 	private WebElement certainDialog(){
 		return this.confirmDialog.findElement(By.xpath("//div[2]/button[2]"));
 	}
-	
 	static int i=0;
 	/**
-	 * button("确定")
+	 * When submit a confirmDialog,it will display a tipDialog:
+	 * if confirmDialog:click submitBtn;
+	 * if tipDialog:return the result;
 	 * @return if displayFailed:
 	 * 				return false
 	 */
 	public Boolean submitDialog(WebDriver driver,String root_path){
 		i=i+1;
-		util.log("+++++In submitDiag");
-		util.screenShot(driver, root_path, "showDiag"+i);
-	
 		if(this.isExist(this.confirmDialog)){
-			util.log("+++++ SubmitDiag:Into the first branch");
+			util.screenShot(driver, root_path, "diag-click"+i);
 			new WebDriverWait(driver,2).until(ExpectedConditions.elementToBeClickable(this.certainDialog())).click();;
-			util.screenShot(driver, root_path, "diag-click1");
 			if(this.isExist(this.dialog)){
-				util.log("another dialog");
 				this.submitDialog(driver,root_path);
 				}
 		}else if(this.isExist(this.sucessTip)){
-			util.log("+++++ SubmitDiag:Into the second branch");
-			util.screenShot(driver, root_path, "diag-succ1");
+			util.screenShot(driver, root_path, "diag-succ"+i);
 			this.closeDialog();
 			return true;
 		}else if(this.isExist(this.failTip)){
-			util.log("++++++ SubmitDiag:Into the third branch");
-			util.screenShot(driver, root_path, "diag-fail");
+			util.screenShot(driver, root_path, "diag-fail"+i);
+			this.closeDialog();
 			return false;
 		} 
-		return true;
-		
+		return true;	
 	}
 	
 	public void cancelDialog(){
@@ -193,34 +187,37 @@ public class FirstLevelList{
 		int i=0;
 		if(op == "测试")
 			i=1;
-		else if (op == "撤回"|| op == "提交")
+		else if (op == "撤回"|| op == "提交" || op == "应用")
 			i=2;
 		else if(op == "编辑")
 			i=3;
 		else if(op == "删除")
 			i=4;
-		return this.items.findElement(By.xpath("//tr["+line+"]/td[10]/a["+i+"]"));
+		if(this.isExist(this.items))
+			return this.items.findElement(By.xpath("//tr["+line+"]/td[10]/a["+i+"]"));
+		else
+			return null;
 	}
 	/**
 	 * @param currentDriver
 	 * @param line of the item(1,2,3...10)
-	 * @param op One operation of item
+	 * @param op One operation(测试|应用,撤回,提交|编辑|删除） of item
 	 * @return If currentPageJumped and displaySucceed:
 	 * 				return true;
 	 * 		   if displayFaild:
-	 * 				return false;		
+	 * 				return false;	
 	 */
 	public Boolean opItem(WebDriver driver,int line,String op,String path){
-		util.log("+++++In opItem");
 		String title1 = driver.getTitle();
-		this.opButtn(line,op).click();
+		WebElement btn=this.opButtn(line, op);
+		if(btn==null)
+			return false;
+		btn.click();
 		util.screenShot(driver, path, "AfterClick");
 		if(!driver.getTitle().equals(title1)){
-			util.log("page jumped,current title is:"+driver.getTitle()+"\n---title1 is:"+title1);
 			return true;
 			}
 		else if(this.submitDialog(driver,path)){
-			util.log("not jumped");
 			return true;
 		}
 		else return false;

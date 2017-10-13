@@ -34,7 +34,7 @@ public class testcase {
 		String url="http://risk.bat.tcredit.com/riskData/trics/data/toDataPage?funCode=201";
 		System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
 		driver = new ChromeDriver();
-		driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
 		util.new_dir(root_path);
 		driver.manage().window().maximize();
 		login();
@@ -109,15 +109,13 @@ public class testcase {
 	public void submitItem(){
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 		driver.navigate().refresh();
-		firstlistpage.searchByStatus("可编辑");
+		firstlistpage.searchByStatus("使用中");
 		String name = firstlistpage.getNameEn(1);
 		util.log(name);
 		util.screenShot(driver, root_path, "submit-step1");
-		if(firstlistpage.opItem(driver,1, "提交",root_path)){
+		if(firstlistpage.opItem(driver,1, "应用",root_path)){
 			util.screenShot(driver, root_path, "submit-step2");
 			driver.navigate().refresh();
-			util.log("The operation name is:"+name);
-			util.log("The result is:"+firstlistpage.getNameEn(1));
 			Assert.assertEquals(firstlistpage.getNameEn(1), name);
 			util.screenShot(driver, root_path, "submit-step3");;
 		}

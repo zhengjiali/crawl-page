@@ -60,7 +60,7 @@ public class testcase {
 
 	}
 	
-	@Test(/*priority=2*/enabled=false)
+	@Test(priority=2/*enabled=false*/)
 	public void searchStatus(){
 		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -69,7 +69,7 @@ public class testcase {
 		util.screenShot(driver, root_path, "searchStatus");	
 	}
 	
-	@Test(/*priority=4*/enabled=false)
+	@Test(priority=4/*enabled=false*/)
 	public void searchTimeStart(){
 		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -77,7 +77,7 @@ public class testcase {
 		util.screenShot(driver, root_path, "searchTimeStart");
 	}
 	
-	@Test(/*priority=3*/enabled=false)
+	@Test(priority=3/*enabled=false*/)
 	public void searchTimeEnd(){
 		driver.navigate().refresh();
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -87,14 +87,6 @@ public class testcase {
 	
 	@Test(enabled=false)
 	public void bulkSubmit(){
-		String s=driver.getTitle();
-		driver.navigate().refresh();
-		if(driver.getTitle().equals(s))
-			util.log("相等");
-		else
-			util.log("相等");
-		Assert.assertEquals(driver.getTitle(), s);
-		/*
 		FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 		firstlistpage.selectItem(1);
 		firstlistpage.selectItem(2);
@@ -102,7 +94,7 @@ public class testcase {
 		firstlistpage.selectItem(4);
 		firstlistpage.selectItem(2);
 		firstlistpage.bulkOpSubmit();
-		util.screenShot(driver, root_path, "selectItem");*/
+		util.screenShot(driver, root_path, "selectItem");
 	}
 	
 	@Test(priority=1)

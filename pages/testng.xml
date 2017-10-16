@@ -2,6 +2,11 @@
 <suite name="Suite1">
     <test name="Crawl-Pages" preserve-order="true">
     <parameter name="admin1" value="123456" />
+    	<groups>
+    		<dependencies>
+    			<group name="testNewData" depends-on="testFirstLevelList" />
+    		</dependencies>
+    	</groups>
         <classes>
             <class name="com.risk.auto.pages.testcase"/>
         </classes>

@@ -25,6 +25,11 @@ public class util {
 		if(debug)
 			System.out.println(b);
 	}
+	public static void log(String s) {
+		// TODO Auto-generated method stub
+		if(debug)
+			System.out.println(s);
+	}
 	
 	public static void screenShot(WebDriver driver,String root_path,String kw){
 		File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
@@ -35,9 +40,5 @@ public class util {
 		}
 		
 	}
-	public static void log(String s) {
-		// TODO Auto-generated method stub
-		if(debug)
-			System.out.println(s);
-	}
+	
 }

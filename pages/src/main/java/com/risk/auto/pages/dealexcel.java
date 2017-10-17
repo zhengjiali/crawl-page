@@ -25,6 +25,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.apache.commons.io.FileUtils;
@@ -126,36 +127,26 @@ public class dealexcel {
 	}
 	
 	public void getPage(String url,String dir,String kw,String title){
+		dir = dir+"/"+kw;
 		try{
 			driver.get(url);
 			driver.manage().window().maximize();
 			Assert.assertEquals(driver.getTitle(), title);
-		}finally{
-			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+".jpg"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-			}
+			RiskFirstList firstlist=PageFactory.initElements(driver, RiskFirstList.class);
+//			firstlist.traverseMainTools(driver,dir);
+//			firstlist.traverseItemTools(driver, dir+"/已预置", "已预置", 1);
+			firstlist.traverseItemTools(driver, dir+"/已启用", "已启用", 1);
+			firstlist.traverseItemTools(driver, dir+"/已停用", "已停用", 1);
+		}catch(Error e){
+			util.screenShot(driver, dir, "err");
 		}
 		
-		try{
-			clickMainTools(dir,kw,title);
-			clickItemTools(dir,kw,title);
-		}catch(Error e){
-			return;
-		}
 	}
 	
 	public void clickCreate(String dir,String kw){
 		try{
 			driver.findElement(By.className("btn_create")).click();
-			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-			try {
-				FileUtils.copyFile(screenshot, new File(dir+"/"+kw+"_click_Create"+".jpg"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-			}
+			util.screenShot(driver, dir, kw+"_click_Create");
 			driver.navigate().back();
 		}catch(NoSuchElementException e){
 			return;

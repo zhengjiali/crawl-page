@@ -1,10 +1,7 @@
 package com.risk.auto.pages;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * 数据端新建数据页面：适用于新建DB、新建API、新建混合的第一步；新建传入数据

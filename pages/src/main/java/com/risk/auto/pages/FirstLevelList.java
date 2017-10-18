@@ -5,8 +5,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 /**
  * 数据端一级列表页
  * @author zhengjiali
@@ -148,6 +146,10 @@ public class FirstLevelList{
 	
 	public void cancelDialog(){
 		this.dialog.findElement(By.xpath("//div[2]/button[1]")).click();
+	}
+	
+	public WebElement getItem(int line){
+		return this.items.findElement(By.xpath("//tr["+line+"]"));
 	}
 	
 	/** 

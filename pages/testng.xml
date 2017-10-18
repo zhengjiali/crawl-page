@@ -8,7 +8,7 @@
     		</dependencies>
     	</groups> -->
         <classes>
-            <class name="com.risk.auto.pages.testcase"/>
-            <!-- <class name="com.risk.auto.pages.dealexcel"/> -->
+            <!-- <class name="com.risk.auto.pages.testcase"/> -->
+            <class name="com.risk.auto.pages.dealexcel"/>
         </classes>
     </test></suite>

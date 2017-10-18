@@ -1,5 +1,7 @@
 package com.risk.auto.pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -64,17 +66,10 @@ public class RiskFirstList {
 	
 	/**
 	 * 搜索：状态
-	 * @param s 已预置|已启用|已停用
+	 * @param int id  [0:未选中]
 	 */
-	public void searchByStatus(String s){
-		Integer id = 0;
-		if(s.equals("已预置"))
-			id=3;
-		else if(s.equals("已启用"))
-			id=4;
-			else if(s.equals("已停用"))
-				id=5;
-		this.status.findElement(By.xpath("//option[@value='"+id+"']")).click();
+	public void searchByStatus(int id){
+		this.status.findElement(By.xpath("//*[@name='status']/option["+id+"]")).click();
 		this.searchBtn.click();
 	}
 	
@@ -93,8 +88,9 @@ public class RiskFirstList {
 		util.log("close dialog");
 		this.closeDialogBtn.click();
 	}
+	
 	/**
-	 * 点击ele，截图存储
+	 * 点击ele，页面跳转返回true，不跳转返回false，并截图
 	 * @param driver
 	 * @param ele 操作元素
 	 * @param root_path 截图存储的路径
@@ -109,114 +105,164 @@ public class RiskFirstList {
 			util.log("title is not the same");
 			return true;
 		}
-		else
+		else{
 			this.closeDialog();
+			new WebDriverWait(driver,2).until(ExpectedConditions.invisibilityOfElementWithText(By.linkText("系统提示"), "系统提示"));
+		}
 		return false;
 	}
+	
 	/**
-	 * 获取ele元素下的所有a标签元素
-	 * @param ele
-	 * @return
+	 * 获取ele元素下的所有标签为tag的元素
+	 * @param ele:WebElement 
+	 * @param tag:String tagName
+	 * @return Arraylist<WebElement>
 	 */
-	public ArrayList<WebElement> getTools(WebElement ele){
+	public ArrayList<WebElement> getElements(WebElement ele,String tag){
 		Assert.assertNotNull(ele);
-		ArrayList<WebElement> elements=(ArrayList<WebElement>) ele.findElements(By.tagName("a"));
+		ArrayList<WebElement> elements=(ArrayList<WebElement>) ele.findElements(By.tagName(tag));
 		if(elements.isEmpty())
 			return null;
 		return elements;
+	}
+	
+	/**
+	 * 获取status选择框下所有的可选标签
+	 * @return
+	 */
+	public ArrayList<WebElement> getStatus(){
+		return this.getElements(this.status, "option");
 	}
 	
 	public String getNameEn(int line){
 		return this.items.findElement(By.xpath("//tr["+line+"]/td[3]")).getText();
 	}
 	
-	public void getAll(){
-		util.log(this.items.getTagName());
-		util.log(this.items.getText());
-		util.log(this.items.toString());
-		WebElement ele=this.items.findElement(By.xpath("//tr[1]"));
-		util.log("...____");
-		util.log(ele.getText());
-		util.log(getNameEn(1));
-		
-//		util.log(getTools(ele).toString());
-	}
 	
 	/**
-	 * 遍历ele元素下所有的a标签,并截图
+	 * 遍历ele元素下所有的标签,并截图
 	 * @param driver
+	 * @param element WebElement
+	 * @param tgName 遍历的标签
 	 * @param root_path 存储截图的目录
-	 * @param ele WebElement
+	 * @param kw 截图名称
 	 * @return
 	 */
-	private Boolean traverse(WebDriver driver,String root_path,WebElement ele){
-		ArrayList<WebElement> tools = getTools(ele);
-		Assert.assertNotNull(tools);
-		String url = driver.getCurrentUrl();
-		int length=tools.size();
-		
-		for(int i = 0;i<length;i++){
-			WebElement e=tools.get(i);
-			this.executeCmd(driver, e, root_path, "cmd"+i);
-			driver.get(url);
-		}
-		return true;
-	} 
+	private void traverse(WebDriver driver,WebElement element,String tgName,String root_path,String kw){
+		try{
+			ArrayList<WebElement> tools = this.getElements(element,tgName);
+			int len=tools.size();
+			if(len == 0)
+				return;
+			for(int j=0;j<len;j+=1){
+				tools = this.getElements(element,tgName);
+				WebElement e = new WebDriverWait(driver,3).until(ExpectedConditions.elementToBeClickable(tools.get(j)));
+				if(e.getAttribute("class").contains("disabled"))
+					continue;
+				String tool=e.getText();
+				util.log(tool);
+				if(this.executeCmd(driver,e , root_path, kw+tool)){
+					util.log("Jumped...");
+					driver.navigate().back();
+				}
+			}
+		}catch(Error e){
+			util.log("Error....");
+			return;
+		}catch(StaleElementReferenceException e){
+			util.log("StaleElementReferenceException...");
+			return;
+		}finally{}
+	}
 	
-	private WebElement getItem(int line){
+	public WebElement getItem(int line){
 		if(this.isExist(this.items))
-			return this.items.findElement(By.xpath("//tr["+line+"]"));
+			return this.items.findElement(By.xpath("//tbody/tr['"+line+"']"));
 		else return null;
 	}
 	
-	static int numItemTools=0;
 	/**
 	 * 遍历第line行的item下所有的操作
 	 * @param driver
 	 * @param root_path
 	 * @param status 已预置|已启用|已停用
 	 * @param line 1,2,3...
+	 * @param kw 图片名称
 	 * @return
 	 */
-	public void traverseItemTools(WebDriver driver,String root_path,String status,int line){
-		this.searchByStatus(status);
-		Assert.assertNotNull(this.getItem(line));
-		ArrayList<WebElement> tools = this.getTools(this.getItem(line));
-		Assert.assertNotNull(tools);
-		int len=tools.size();
-		util.log("Item tools "+len);
-		for(;this.numItemTools<len;){
-			WebElement e = new WebDriverWait(driver,5).until(ExpectedConditions.elementToBeClickable(tools.get(this.numItemTools)));
-			if(this.executeCmd(driver,e , root_path, "ItemTools-"+this.numItemTools)){
-				util.log("Jumped...");
-				driver.navigate().back();
+	public void traverseItemTools(WebDriver driver,String root_path,int id,int line,String kw){
+		this.searchByStatus(id);
+		try{
+			Assert.assertNotNull(this.getItem(line));
+			ArrayList<WebElement> tools = this.getElements(this.getItem(line),"a");
+			Assert.assertNotNull(tools);
+			int len=tools.size();
+			for(int i=0;i<len;i+=1){
+				util.log(i);
+				tools = this.getElements(this.getItem(line),"a");
+				WebElement e = new WebDriverWait(driver,3).until(ExpectedConditions.elementToBeClickable(tools.get(i)));
+				if(e.getAttribute("class").contains("disabled"))
+					continue;
+				String tool=e.getText();
+				util.log(tool);
+				if(this.executeCmd(driver,e , root_path, kw+'-'+tool)){
+					util.log("Jumped...");
+					driver.navigate().back();
+				}
+				
 			}
-			driver.navigate().refresh();
-			this.numItemTools+=1;
-			this.traverseItemTools(driver, root_path, status, line);
-		}
-		numItemTools=0;
+		}catch(Error e){
+			util.log("Error....");
+			return;
+		}catch(StaleElementReferenceException e){
+			util.log("StaleElementReferenceException...");
+			return;
+		}catch(NoSuchElementException e){
+			util.log("NoSuchElementException...");
+			return;
+		}finally{}
 	}
 
 	
 	/**
 	 * 遍历mainTools
 	 */
-	public void traverseMainTools(WebDriver driver,String root_path){
-		String url = driver.getCurrentUrl();
-		ArrayList<WebElement> tools = this.getTools(this.mainTools);
-		int len=tools.size();
-		util.log("the tools "+len);
-		for(;this.numItemTools<len;){
-			WebElement e = new WebDriverWait(driver,5).until(ExpectedConditions.elementToBeClickable(tools.get(this.numItemTools)));
-			if(this.executeCmd(driver,e , root_path, "MainTools-"+this.numItemTools)){
-				util.log("Jumped...");
-				driver.navigate().back();
+	public void traverseMainTools(WebDriver driver,String root_path,String kw){
+		
+		try{
+			ArrayList<WebElement> tools = this.getElements(this.mainTools,"a");
+			int len=tools.size();
+			if(len == 0)
+				return;
+			for(int j=0;j<len;j+=1){
+				tools = this.getElements(this.mainTools,"a");
+				WebElement e = new WebDriverWait(driver,3).until(ExpectedConditions.elementToBeClickable(tools.get(j)));
+				if(e.getAttribute("class").contains("disabled"))
+					continue;
+				String tool=e.getText();
+				util.log(tool);
+				if(this.executeCmd(driver,e , root_path, kw+"-批量"+tool)){
+					util.log("Jumped...");
+					driver.navigate().back();
+				}
 			}
-			driver.navigate().refresh();
-			this.numItemTools+=1;
-			this.traverseMainTools(driver, root_path);
-		}
-		numItemTools=0;
+		}catch(Error e){
+			util.log("Error....");
+			return;
+		}catch(StaleElementReferenceException e){
+			util.log("StaleElementReferenceException...");
+			return;
+		}catch(NoSuchElementException e){
+			util.log("NoSuchElementException...");
+			util.log(e.getMessage());
+			return;
+		}finally{}
+
+		
 	}
+	
+	/*public void traverseStatus(WebDriver driver,String root_path){
+		ArrayList<WebElement> status=this.getElements(this.status, "option");
+		for()
+	}*/
 }

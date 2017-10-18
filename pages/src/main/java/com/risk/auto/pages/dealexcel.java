@@ -2,7 +2,6 @@ package com.risk.auto.pages;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,33 +13,20 @@ import java.util.ArrayList;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.testng.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-
-import org.testng.Assert;
-import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -128,18 +114,20 @@ public class dealexcel {
 	
 	public void getPage(String url,String dir,String kw,String title){
 		dir = dir+"/"+kw;
-		try{
-			driver.get(url);
-			driver.manage().window().maximize();
-			Assert.assertEquals(driver.getTitle(), title);
-			RiskFirstList firstlist=PageFactory.initElements(driver, RiskFirstList.class);
-//			firstlist.traverseMainTools(driver,dir);
-//			firstlist.traverseItemTools(driver, dir+"/已预置", "已预置", 1);
-			firstlist.traverseItemTools(driver, dir+"/已启用", "已启用", 1);
-			firstlist.traverseItemTools(driver, dir+"/已停用", "已停用", 1);
-		}catch(Error e){
-			util.screenShot(driver, dir, "err");
+		driver.get(url);
+		driver.manage().window().setSize(new Dimension(1320,800));
+		Assert.assertEquals(driver.getTitle(), title);
+		util.screenShot(driver, dir, "home");
+		RiskFirstList firstlist=PageFactory.initElements(driver, RiskFirstList.class);
+		firstlist.traverseMainTools(driver,dir,title);
+		ArrayList<WebElement> elements=firstlist.getStatus();
+		int l=elements.size();
+		for(int i=1;i<l;i+=1){
+			String pre= firstlist.getStatus().get(i).getText();
+			util.screenShot(driver, dir, title+pre);
+			firstlist.traverseItemTools(driver, dir, i+1, 1, title+pre);
 		}
+		
 		
 	}
 	

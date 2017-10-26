@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +15,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import java.util.Date;
 
@@ -41,30 +44,32 @@ public class dealexcel {
 	File file;
 	ArrayList<HashMap<String, String>> pages;
 	
-	
+	@Parameters("type")
 	@BeforeClass
-	public void setUp() throws IOException{
-		System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-		driver = new ChromeDriver();
+	public void setUp(String type) throws IOException{
+		if(type.equals("firefox"))
+			driver = new RemoteWebDriver(new URL("http://127.0.0.1:4444/wd/hub"),DesiredCapabilities.firefox());
+		else if(type.equals("chrome"))
+			driver = new RemoteWebDriver(new URL("http://127.0.0.1:4444/wd/hub"),DesiredCapabilities.chrome());
 		driver.get(uri+"/risk/trics/login");
 		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS);
 		new_dir(root_path);
 	}
 	
-	@Parameters({"admin1"})
+	@Parameters({"username","password"})
 	@BeforeMethod
-	public void login(String admin1) throws IOException{
+	public void login(String username,String password) throws IOException{
 		WebElement ElementName = driver.findElement(By.id("user_name"));
 		WebElement ElementPwd = driver.findElement(By.id("pwd"));
-		ElementName.sendKeys("admin1");
-		ElementPwd.sendKeys(admin1);
+		ElementName.sendKeys(username);
+		ElementPwd.sendKeys(password);
 		WebElement ElementLogin = driver.findElement(By.className("submit_btn"));
 		ElementLogin.click();
 		System.out.println(driver.getTitle());
 		new WebDriverWait(driver, 5 ).until(
 				ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > div.container > div.clearfix.header > a"))
 		);
-		currPath = root_path+"/"+"admin1";
+		currPath = root_path+"/"+username;
 		new_dir(currPath);
 	}
 	

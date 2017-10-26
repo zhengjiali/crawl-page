@@ -3,6 +3,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -138,7 +139,7 @@ public class RiskFirstList {
 		return this.items.findElement(By.xpath("//tr["+line+"]/td[3]")).getText();
 	}
 	
-	
+	static int i=0;
 	/**
 	 * 遍历ele元素下所有的标签,并截图
 	 * @param driver
@@ -168,9 +169,27 @@ public class RiskFirstList {
 			}
 		}catch(Error e){
 			util.log("Error....");
+			util.screenShot(driver, root_path, "Err-"+i);
+			i+=1;
 			return;
 		}catch(StaleElementReferenceException e){
 			util.log("StaleElementReferenceException...");
+			util.screenShot(driver, root_path, "Err-SERE"+i);
+			i+=1;
+			return;
+		}catch(NoSuchElementException e){
+			util.log("********NoSuchElementException*********");
+			util.log(e.getMessage());
+			util.log("********NoSuchElementException*********");
+			util.screenShot(driver, root_path, "Err-NoSEE"+i);
+			i+=1;
+			return;
+		}catch(WebDriverException e){
+			util.log("********WebDriverException*********");
+			util.log(e.getMessage());
+			util.log("********WebDriverException*********");
+			util.screenShot(driver, root_path, "Err-WDE"+i);
+			i+=1;
 			return;
 		}finally{}
 	}
@@ -198,7 +217,7 @@ public class RiskFirstList {
 			Assert.assertNotNull(tools);
 			int len=tools.size();
 			for(int i=0;i<len;i+=1){
-				util.log(i);
+				this.searchByStatus(id);
 				tools = this.getElements(this.getItem(line),"a");
 				WebElement e = new WebDriverWait(driver,3).until(ExpectedConditions.elementToBeClickable(tools.get(i)));
 				if(e.getAttribute("class").contains("disabled"))
@@ -213,12 +232,27 @@ public class RiskFirstList {
 			}
 		}catch(Error e){
 			util.log("Error....");
+			util.screenShot(driver, root_path, "Err-"+i);
+			i+=1;
 			return;
 		}catch(StaleElementReferenceException e){
 			util.log("StaleElementReferenceException...");
+			util.screenShot(driver, root_path, "Err-SERE"+i);
+			i+=1;
 			return;
 		}catch(NoSuchElementException e){
-			util.log("NoSuchElementException...");
+			util.log("********NoSuchElementException*********");
+			util.log(e.getMessage());
+			util.log("********NoSuchElementException*********");
+			util.screenShot(driver, root_path, "Err-NoSEE"+i);
+			i+=1;
+			return;
+		}catch(WebDriverException e){
+			util.log("********WebDriverException*********");
+			util.log(e.getMessage());
+			util.log("********WebDriverException*********");
+			util.screenShot(driver, root_path, "Err-WDE"+i);
+			i+=1;
 			return;
 		}finally{}
 	}
@@ -241,20 +275,48 @@ public class RiskFirstList {
 					continue;
 				String tool=e.getText();
 				util.log(tool);
+				/*try{
+					if(this.executeCmd(driver,e , root_path, kw+"-批量"+tool)){
+						util.log("Jumped...");
+						driver.navigate().back();
+					}
+				}catch(Exception e1){
+					util.log("********Exception*********");
+					util.log(e1.getMessage());
+					util.log("********Exception*********");
+					util.screenShot(driver, root_path, "Err1-"+i);
+					i+=1;
+					continue;
+				}finally{}*/
 				if(this.executeCmd(driver,e , root_path, kw+"-批量"+tool)){
 					util.log("Jumped...");
 					driver.navigate().back();
 				}
+				
 			}
 		}catch(Error e){
 			util.log("Error....");
+			util.screenShot(driver, root_path, "Err-"+i);
+			i+=1;
 			return;
 		}catch(StaleElementReferenceException e){
 			util.log("StaleElementReferenceException...");
+			util.screenShot(driver, root_path, "Err-SERE"+i);
+			i+=1;
 			return;
 		}catch(NoSuchElementException e){
-			util.log("NoSuchElementException...");
+			util.log("********NoSuchElementException*********");
 			util.log(e.getMessage());
+			util.log("********NoSuchElementException*********");
+			util.screenShot(driver, root_path, "Err-NoSEE"+i);
+			i+=1;
+			return;
+		}catch(WebDriverException e){
+			util.log("********WebDriverException*********");
+			util.log(e.getMessage());
+			util.log("********WebDriverException*********");
+			util.screenShot(driver, root_path, "Err-WDE"+i);
+			i+=1;
 			return;
 		}finally{}
 

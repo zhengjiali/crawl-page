@@ -13,7 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
-
+import org.openqa.selenium.Dimension;
 import com.risk.auto.pages.util;
 
 
@@ -47,46 +47,34 @@ public class testcase {
 		public void setUp() throws IOException{
 			System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
 			driver = new ChromeDriver();
-			driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+			driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
 			util.new_dir(root_path);
-			driver.manage().window().maximize();
+//			driver.manage().window().maximize();
+			driver.manage().window().setSize(new Dimension(1420,800));
 			login();
 			driver.get(uri+path_b);
-			String title = driver.getTitle();
 		}
-		
-//		@Test
-//		public void bulkStart(){
-//			driver.get("http://risk.bat.tcredit.com/risk/trics/planRun/toQuery");
-//			RiskFirstList firstlist = PageFactory.initElements(driver, RiskFirstList.class);
-//			firstlist.traverseItemTools(driver, root_path, "已启用", 1);
-//		}
-		
-		@Test
-		public void test(){
-//			driver.get("http://risk.bat.tcredit.com/risk/trics/planRun/toQuery");
+		/*@Test
+		public void bulkStart(){
+			driver.get("http://risk.bat.tcredit.com/risk/trics/plan/toQuery");
+			String title=driver.getTitle();
 			RiskFirstList firstlist = PageFactory.initElements(driver, RiskFirstList.class);
-			firstlist.getAll();
-		}
-		
-		@Test
-		public void test2(){
-			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
-			util.log("****************");
-			util.log(firstlistpage.getNameCn(1));
-			
-		}
-		
-	/*	@BeforeMethod
-		public void initTest(){
-			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
-		}
-		@AfterMethod
-		public void tearTest(){
+			ArrayList<WebElement> elements=firstlist.getStatus();
+			int l=elements.size();
+			for(int i=1;i<l;i+=1){
+				String pre= firstlist.getStatus().get(i).getText();
+				util.log(pre);
+				firstlist.searchByStatus(i+1);
+				util.screenShot(driver, root_path, "xxxx"+i);
+//				firstlist.traverseItemTools(driver, root_path, i, 1, title+pre);
+			}
+//			firstlist.traverseMainTools(driver,root_path);
+//			firstlist.traverseItemTools(driver, root_path+"/已预置", "已预置", 1,"http://risk.bat.tcredit.com/risk/trics/planRun/toQuery");
+//			firstlist.traverseItemTools(driver, root_path+"/已启用", "已启用", 1,"http://risk.bat.tcredit.com/risk/trics/planRun/toQuery");
 		}*/
 		
-/*		
-		@Test(priority=2enabled=false)
+			
+		@Test(priority=2)
 		public void searchStatus(){
 			driver.get(uri+path_b);
 			driver.navigate().refresh();
@@ -96,7 +84,7 @@ public class testcase {
 			util.screenShot(driver, root_path, "searchStatus");	
 		}
 		
-		@Test(priority=4enabled=false)
+		@Test(priority=4)
 		public void searchTimeStart(){
 			driver.get(uri+path_b);
 			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -104,7 +92,7 @@ public class testcase {
 			util.screenShot(driver, root_path, "searchTimeStart");
 		}
 		
-		@Test(priority=3enabled=false)
+		@Test(priority=3)
 		public void searchTimeEnd(){
 			driver.get(uri+path_b);
 			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -112,7 +100,7 @@ public class testcase {
 			util.screenShot(driver, root_path, "searchTimeEnd");
 		}
 		
-		@Test(priority=5enabled=false)
+		@Test(priority=5)
 		public void bulkSubmit(){
 			driver.get(uri+path_b);
 			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -143,7 +131,7 @@ public class testcase {
 			firstlistpage.deleteAll(driver, root_path);
 		}
 		
-		@Test(priority=1enabled=false)
+		@Test(priority=1)
 		public void submitItem(){
 			driver.get(uri+path_b);
 			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -161,18 +149,18 @@ public class testcase {
 				util.screenShot(driver, root_path, "submit-err");
 				Assert.fail();
 			}
-		}*/
+		}
 		
-	/*	@Test(priority=1enabled=false)
+		@Test(priority=1)
 		public void submitAll(){
 			driver.get(uri+path_b);
 			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
 			firstlistpage.submitAll(driver, root_path);
-		}*/
+		}
 		
 		
 
-		/*@Test(priority=8enabled=false)
+		@Test(priority=8)
 		public void testItem(){
 			driver.get(uri+"/riskData/trics/data/toDataPage?funCode=101");
 			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -186,9 +174,9 @@ public class testcase {
 				util.screenShot(driver, root_path, "submit-err");
 				Assert.fail();
 			}
-		}*/
+		}
 		
-		/*@Test(priority=1)
+		@Test(priority=1)
 		public void editItem_submited(){
 			driver.get(uri+"/riskData/trics/data/toDataPage?funCode=101");
 			FirstLevelList firstlistpage=PageFactory.initElements(driver, FirstLevelList.class);
@@ -205,7 +193,7 @@ public class testcase {
 				util.screenShot(driver, root_path, "submit-err");
 				Assert.fail();
 			}
-		}*/
+		}
 		
 		@AfterClass
 		public void tearDown(){
@@ -213,7 +201,7 @@ public class testcase {
 		}
 	}
 	
-/*	@Test(groups="testNewData")
+	@Test(groups="testNewData")
 	public class NewDataTest{
 		private String path_b="/riskData/trics/code/toDataAttrPage?funCode=202";
 		private String root_path = root+"/testNewData";
@@ -226,7 +214,6 @@ public class testcase {
 			driver.manage().window().maximize();
 			login();
 			driver.get(uri+path_b);
-			String title = driver.getTitle();
 		}
 		@AfterClass
 		public void tearDown(){
@@ -261,6 +248,6 @@ public class testcase {
 			Assert.assertEquals(newdata.getNameEnErr(), "须以英文字母开头，且只能包含英文字母、数字或下划线");
 		}
 		
-	}*/
+	}
 	
 }
